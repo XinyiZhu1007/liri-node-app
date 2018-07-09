@@ -17,27 +17,52 @@ for(var i = 3; i<process.argv.length; i++) {
         userQuery = process.argv[3];
     }
 };
-// console.log(userQuery);
 
-switch(arg) {
-    case "my-tweet":
-        getTweets();
-        break;
-    case "spotify-this-song":
-        getSongs(userQuery);
-        break;
-    case "movie-this":
-        getMovies(userQuery);
-        break;
-    case "do-what-it-says":
-        doStuff();
-        break;
-    default:
-        console.log("Invalid argument.");
-};
+switchArg(arg);
+
+// console.log(userQuery);
+function switchArg(arg) {
+    switch(arg) {
+        case "my-tweet":
+            getTweets();
+            break;
+        case "spotify-this-song":
+            getSongs(userQuery);
+            break;
+        case "movie-this":
+            getMovies(userQuery);
+            break;
+        case "do-what-it-says":
+            doStuff();
+            break;
+        default:
+            console.log("Invalid argument.");
+    };
+}
+
 
 function getTweets() {
-
+    var params = {screen_name: 'DummyXinyi'};
+    twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
+        console.log(tweets);
+        if (!error) {
+            if(tweets.length <= 20) {
+                for( var j = 0; j < tweets.length; j++) {
+                    var date = tweets[j].created_at;
+                    console.log("   @DummyXinyi: " + tweets[j].text + " Created At: " + date.substring(0, 19));
+                    console.log("       ~*~*~*~*~*~*~*~*~*~*~");
+                }
+            } else { 
+                for( var j = 0; j < 20; j++){
+                    var date = tweets[j].created_at;
+                    console.log("   @DummyXinyi: " + tweets[j].text + " Created At: " + date.substring(0, 19));
+                    console.log("       ~*~*~*~*~*~*~*~*~*~*~");
+                }
+            };
+        } else {
+            throw error;
+        }
+    });
 };
 
 function getSongs(userQuery) {
@@ -84,5 +109,16 @@ function getMovies(userQuery) {
 };
 
 function doStuff() {
-
+    fs.readFile("random.txt", "utf8", (err, data) => {
+        if (err) {
+            throw err;
+        } else {
+            var dataList = data.split(",");
+            // console.log(dataList);
+                // console.log(dataList[k]);
+            arg = dataList[0];
+            userQuery = dataList[1];
+            switchArg(arg);
+        }
+    })
 };
